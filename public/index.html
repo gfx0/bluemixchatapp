@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>  
+</head>
+<body>
+
+<div id="chatlog">
+
+
+
+</div>
+        <input type="text" id="message" autofocus>
+        <input type="button" value="send" onclick="sendMessage();">
+		
+
+<script>  
+    var socket = io.connect('/');
+	socket.on('announcements', function(data) {
+        console.log('Got announcement:', data.message);
+		// The data is simply the message that we're sending back
+		// Append the message
+		document.getElementById('chatlog').innerHTML += '<br>' + data.message;
+    });
+	
+	socket.on('chatmessage', function(data) {
+        console.log('Got chatmessage:', data.message);
+		// The data is simply the message that we're sending back
+		// Append the message
+		document.getElementById('chatlog').innerHTML += '<br>' + data.message;
+    });
+	
+	function sendMessage()
+	{
+		var msg = document.getElementById('message').value;
+		if ( msg )
+			socket.emit('event', { message: msg });
+	}
+</script> 
+		
+</body>
+</html>
