@@ -4,38 +4,64 @@
 </head>
 <body>
 
-<div id="chatlog">
-
-
-
-</div>
-        <input type="text" id="message" autofocus>
-        <input type="button" value="send" onclick="sendMessage();">
+	<div id="demo" style="margin-left: 64px; margin-top: 64px; margin-right: 64px; background-color:#eeeeee;">
+		<br/>
+		<center>
+		<h3>IBM Bluemix Node.js Socket.io Chat App</h3>
+		<h4>.. by Shan & Mayura & Jani ..</h4>
+		</center>
 		
+		<div id="thechat" style="background-color: #dddddd; margin-left: 32px; margin-right: 32px;">
+		
+			<div id="chatView" style="margin-left: 32px;">
 
-<script>  
-    var socket = io.connect('/');
-	socket.on('announcements', function(data) {
-        console.log('Got announcement:', data.message);
-		// The data is simply the message that we're sending back
-		// Append the message
-		document.getElementById('chatlog').innerHTML += '<br>' + data.message;
-    });
+			</div>
+
+			<br/>
+			
+			<div id="inputView" style="margin-left: 32px">
+				<form action="#">
+					<input type="text" id="message" onkeypress="textBoxKeyPress(event)" autofocus>
+					<input type="button" value="Send Message" onclick="sendMessage();">
+				</form>
+			</div>
+			<br/>
+		</div>
+		<br/>
+	</div>
+	<script>
 	
-	socket.on('chatmessage', function(data) {
-        console.log('Got chatmessage:', data.message);
-		// The data is simply the message that we're sending back
-		// Append the message
-		document.getElementById('chatlog').innerHTML += '<br>' + data.message;
-    });
-	
-	function sendMessage()
-	{
-		var msg = document.getElementById('message').value;
-		if ( msg )
-			socket.emit('event', { message: msg });
-	}
-</script> 
+		//For simply pressing enter to send a chat message without form submission page refresh.
+		function textBoxKeyPress(e)
+		{
+			if(e.keyCode === 13)
+			{
+				sendMessage();
+			}			
+			return false;
+		}
+		
+		var socket = io.connect('/');
+		socket.on('newconnection', function(data) {
+			console.log('Server is informing us of a new connection:', data.message);
+			document.getElementById('chatView').innerHTML += '<br/>'+data.message+'<br/>';
+		});
+		
+		socket.on('chatmessage', function(data) {
+			console.log('Got chatmessage:', data.message);
+			document.getElementById('chatView').innerHTML += '<br>'+data.message;
+		});
+		
+		function sendMessage()
+		{
+			var msg = document.getElementById('message').value;
+			if ( msg )
+				socket.emit('event', { message: msg });
+			
+			//Clear the input after the user sends it.
+			document.getElementById('message').value = "";
+		}
+	</script>
 		
 </body>
 </html>

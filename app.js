@@ -27,7 +27,7 @@ io.on('connection', function(socket) {
 
 	console.log('A new connection was detected: socket: ' + socket);
 	//Server to client
-    socket.emit('announcements', { message: 'A new user has joined!' });
+    socket.emit('newconnection', { message: '<b>Server:</b> Connection accepted, welcome to the chat, total clients in chat: ' + numClients });
 	
 	/*
 	for(var i in clients)
@@ -42,13 +42,27 @@ io.on('connection', function(socket) {
 	
 	//Client to server.
 	socket.on('event', function(data) {
+		
+		var disregardSending = true;
+		if ( data.message.indexOf('<') != -1 && data.message.indexOf('>' != -1 ) )
+		{
+			console.log("String contains html, disregard it.\n");
+			return;
+		}
+
         console.log('A client sent this, send it to others: ', data.message);
 		for(var i = 0; i < clients.length; i++ )
-			clients[i].emit('chatmessage', {message: data.message } );
+			
+			//TODO: Make this self broadcast happen only in clientside code to relive stress from server.
+			if ( clients[i] == socket )
+				clients[i].emit('chatmessage', {message: '<b>You:</b> ' + data.message } );
+			else
+				clients[i].emit('chatmessage', {message: '<b>Someone:</b> ' + data.message } );
     });
 	
 	socket.on('disconnect', function() {
         console.log('A client has disconnected...');
+		numClients--;
     });
 	
 });
