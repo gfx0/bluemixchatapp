@@ -1,0 +1,10 @@
+
+
+
+Pretty good overview of dev process with this:
+
++ node js command prompt, for npm building, local testing
++ apache local webserver running for quick localhost tests
++ cf logs testingnodejsapp --- follow logs on server and console output of server
++ cf push testingnodejsapp --- for pushing while tarcking server changes
++ 10 billion chromes open for testing various s**t
